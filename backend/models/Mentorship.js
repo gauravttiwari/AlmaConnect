@@ -8,4 +8,4 @@ const MentorshipSchema = new mongoose.Schema({
   progress: String,
   createdAt: { type: Date, default: Date.now }
 });
-module.exports = mongoose.model('Mentorship', MentorshipSchema);
+module.exports = mongoose.model('Mentorship', MentorshipSchema,'mentorships');

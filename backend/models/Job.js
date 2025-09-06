@@ -10,4 +10,4 @@ const jobSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }
 });
 
-module.exports = mongoose.model('Job', jobSchema);
+module.exports = mongoose.model('Job', jobSchema,'jobs');

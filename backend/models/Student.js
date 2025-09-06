@@ -10,4 +10,4 @@ const StudentSchema = new mongoose.Schema({
   linkedin: String,
   resume: String
 });
-module.exports = mongoose.model('Student', StudentSchema);
+module.exports = mongoose.model('Student', StudentSchema, 'students');

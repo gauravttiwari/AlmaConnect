@@ -2,6 +2,7 @@
 const Alumni = require('../models/Alumni');
 const mongoose = require('mongoose');
 const cloudinary = require('../utils/cloudinary');
+const { getAll } = require('./studentController');
 
 const alumniController = {
   async approve(req, res) {
@@ -23,7 +24,7 @@ const alumniController = {
     const count = await Alumni.countDocuments();
     res.json({ count });
   },
-  async list(req, res) {
+  async getAll(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -46,11 +47,14 @@ const alumniController = {
     }
   },
   async register(req, res) {
-    // ...existing code...
-  },
-  async getAll(req, res) {
-    const alumni = await Alumni.find();
-    res.json(alumni);
+    console.log('Register endpoint hit');
+    try {
+    const alumni = new Alumni(req.body);
+    await alumni.save();
+    res.status(201).json(alumni);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating alumni', error: err });
+  }
   },
   async getById(req, res) {
     const alumni = await Alumni.findById(req.params.id);

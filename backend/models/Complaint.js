@@ -7,4 +7,4 @@ const ComplaintSchema = new mongoose.Schema({
   resolved: { type: Boolean, default: false }
 });
 
-module.exports = mongoose.model('Complaint', ComplaintSchema);
+module.exports = mongoose.model('Complaint', ComplaintSchema,'complaints');

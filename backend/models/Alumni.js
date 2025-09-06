@@ -21,4 +21,4 @@ const AlumniSchema = new mongoose.Schema({
 AlumniSchema.index({ email: 1 });
 AlumniSchema.index({ name: 1 });
 AlumniSchema.index({ avgRating: -1 });
-module.exports = mongoose.model('Alumni', AlumniSchema);
+module.exports = mongoose.model('Alumni', AlumniSchema,'alumnis');

@@ -30,10 +30,18 @@ const studentController = {
       skills: Joi.array().items(Joi.string()),
       location: Joi.string(),
       linkedin: Joi.string(),
-      github: Joi.string()
+      github: Joi.string(),
+      resume: Joi.string()
     });
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).json({ error: error.details[0].message });
+    try {
+    const student = new Student(req.body);
+    await student.save();
+    res.status(201).json(student);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating student', error: err });
+  }
     // ...existing code...
   },
   async getAll(req, res) {

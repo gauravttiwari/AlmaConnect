@@ -7,7 +7,7 @@ router.patch('/alumni/:id/approve', alumniController.approve);
 router.patch('/alumni/:id/block', alumniController.block);
 router.patch('/alumni/:id/unblock', alumniController.unblock);
 router.get('/alumni/count', alumniController.count);
-router.get('/alumni', alumniController.list); // paginated
+router.get('/alumni', alumniController.getAll); // paginated
 router.patch('/events/:id/approve', eventController.approveEvent);
 router.patch('/events/:id/reject', eventController.rejectEvent);
 router.get('/events/stats', eventController.eventStats);

@@ -57,7 +57,8 @@ io.on('connection', (socket) => {
 });
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://almaconnect03_db_user:Lucifer892482@cluster0.swyxgex.mongodb.net/almaconnect?retryWrites=true&w=majority&appName=Cluster0')
+require('dotenv').config();
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
 
