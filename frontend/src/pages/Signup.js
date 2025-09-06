@@ -12,31 +12,41 @@ const Signup = () => {
   const [company, setCompany] = useState('');
   const [popup, setPopup] = useState({ show: false, message: '', type: '' });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Add real signup logic here
-    if (name && email && password) {
-      setPopup({ show: true, message: 'Account created successfully', type: 'success' });
-      setTimeout(() => {
-        setPopup({ show: false, message: '', type: '' });
-        if (userType === 'admin') {
+    const payload = {
+      name,
+      email,
+      password,
+      role: userType,
+      graduationYear,
+      branch,
+      company: userType === 'alumni' ? company : undefined
+    };
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPopup({ show: true, message: 'Account created successfully', type: 'success' });
+        setTimeout(() => {
+          setPopup({ show: false, message: '', type: '' });
           localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userType', 'admin');
-          navigate('/admin');
-        } else if (userType === 'student') {
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userType', 'student');
-          navigate('/student-home');
-        } else if (userType === 'alumni') {
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userType', 'alumni');
-          navigate('/alumni-home');
-        } else {
-          navigate('/login');
-        }
-      }, 2000);
-    } else {
-      setPopup({ show: true, message: 'Account creation failed', type: 'error' });
+          localStorage.setItem('userType', userType);
+          if (userType === 'admin') navigate('/admin');
+          else if (userType === 'student') navigate('/student-home');
+          else if (userType === 'alumni') navigate('/alumni-home');
+          else navigate('/login');
+        }, 2000);
+      } else {
+        setPopup({ show: true, message: data.message || 'Account creation failed', type: 'error' });
+        setTimeout(() => setPopup({ show: false, message: '', type: '' }), 2000);
+      }
+    } catch (err) {
+      setPopup({ show: true, message: 'Server error', type: 'error' });
       setTimeout(() => setPopup({ show: false, message: '', type: '' }), 2000);
     }
   };

@@ -1,4 +1,4 @@
-// Auth Controller: Register, Login, Refresh
+// Auth Controller: Register, Login
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../middleware/authMiddleware');
@@ -6,6 +6,7 @@ const Student = require('../models/Student');
 const Alumni = require('../models/Alumni');
 
 async function register(req, res) {
+  console.log('Registering user:', req.body);
   const { name, email, password, role, graduationYear, branch, company } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   let user;
@@ -17,6 +18,7 @@ async function register(req, res) {
     return res.status(400).json({ message: 'Invalid role' });
   }
   await user.save();
+  console.log('User saved:', user);
   res.status(201).json({ message: 'User registered', user });
 }
 
