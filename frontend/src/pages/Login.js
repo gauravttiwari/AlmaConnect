@@ -1,33 +1,44 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated, userType: authUserType } = useAuth();
   const navigate = useNavigate();
   const [userType, setUserType] = useState('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [popup, setPopup] = useState({ show: false, message: '', type: '' });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (authUserType === 'admin') navigate('/admin');
+      else if (authUserType === 'student') navigate('/student-home');
+      else if (authUserType === 'alumni') navigate('/alumni-home');
+      else navigate('/profile');
+    }
+  }, [isAuthenticated, authUserType, navigate]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Add real authentication logic here
     // Simulate login success/failure
     if (email && password) {
-      login();
+      login(userType); // Store userType in AuthContext and localStorage
       setPopup({ show: true, message: 'Login successfully', type: 'success' });
-      setTimeout(() => setPopup({ show: false, message: '', type: '' }), 2000);
-      if (userType === 'admin') {
-        navigate('/admin');
-      } else if (userType === 'student') {
-        navigate('/student-home');
-      } else if (userType === 'alumni') {
-        navigate('/alumni-home');
-      } else {
-        navigate('/profile');
-      }
+      setTimeout(() => {
+        setPopup({ show: false, message: '', type: '' });
+        if (userType === 'admin') {
+          navigate('/admin');
+        } else if (userType === 'student') {
+          navigate('/student-home');
+        } else if (userType === 'alumni') {
+          navigate('/alumni-home');
+        } else {
+          navigate('/profile');
+        }
+      }, 1200);
     } else {
       setPopup({ show: true, message: 'Login failed', type: 'error' });
       setTimeout(() => setPopup({ show: false, message: '', type: '' }), 2000);

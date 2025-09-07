@@ -1,4 +1,4 @@
-const Event = require('../../models/event/Event');
+const Event = require('../../models/Event');
 const cloudinary = require('../../utils/cloudinary');
 
 const eventController = {

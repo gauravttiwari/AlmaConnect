@@ -1,5 +1,6 @@
 // Main backend entry point
 const express = require('express');
+const adminEventRoutes = require('./routes/adminEvent');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -17,6 +18,8 @@ const eventRoutes = require('./routes/event/event');
 const referralRoutes = require('./routes/referral/referral');
 const jobRoutes = require('./routes/adminJob');
 const adminRoutes = require('./routes/admin');
+const adminMentorshipRoutes = require('./routes/adminMentorship');
+const adminJobReferralRoutes = require('./routes/adminJobReferral');
 const feedbackRoutes = require('./routes/feedback');
 const postRoutes = require('./routes/post');
 
@@ -42,6 +45,9 @@ app.use('/api/events', eventRoutes);
 app.use('/api/referrals', referralRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminMentorshipRoutes);
+app.use('/api/admin', adminJobReferralRoutes);
+app.use('/api/admin', adminEventRoutes);
 app.use('/api', feedbackRoutes);
 app.use('/api/posts', postRoutes);
 

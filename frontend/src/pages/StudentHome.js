@@ -6,10 +6,13 @@ import { Card, CardContent, Typography, IconButton, Box, TextField, Button, Divi
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ShareIcon from '@mui/icons-material/Share';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const API_URL = 'http://localhost:5000/api/posts/feed';
 
 export default function StudentHome() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [commentText, setCommentText] = useState({});
 
@@ -41,6 +44,14 @@ export default function StudentHome() {
 
   return (
     <>
+      <Box sx={{ position: 'relative' }}>
+        <IconButton
+          onClick={() => navigate(-1)}
+          sx={{ position: 'absolute', top: 24, left: 24, background: '#fff', boxShadow: 2, zIndex: 1000 }}
+          aria-label="back"
+        >
+          <ArrowBackIcon sx={{ color: '#1976d2', fontSize: 32 }} />
+        </IconButton>
       <Box sx={{ maxWidth: 600, margin: '32px auto', pb: 10 }}>
         <Typography variant="h4" sx={{ mb: 3, textAlign: 'center' }}>Student & Alumni Feed</Typography>
         <CreatePost onPostCreated={fetchPosts} />

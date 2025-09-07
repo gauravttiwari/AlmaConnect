@@ -13,5 +13,10 @@ router.patch('/events/:id/approve', eventController.approveEvent);
 router.patch('/events/:id/reject', eventController.rejectEvent);
 router.get('/events/stats', eventController.eventStats);
 router.get('/dashboard-stats', adminController.dashboardStats);
+router.get('/users', adminController.getAllUsers);
+router.patch('/alumni/:id/verify', adminController.verifyAlumni);
+router.patch('/user/:role/:id/block', adminController.blockUser);
+router.delete('/user/:role/:id', adminController.deleteUser);
+router.get('/users/export', adminController.exportUsers);
 
 module.exports = router;

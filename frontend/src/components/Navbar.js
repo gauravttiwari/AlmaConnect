@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
@@ -49,6 +50,7 @@ export default function Navbar() {
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState(3); // Example badge count
   const navigate = useNavigate();
+  const { isAuthenticated, userType, logout } = useAuth();
 
   const handleRoleMenuOpen = (event) => {
     setRoleAnchorEl(event.currentTarget);
@@ -66,18 +68,32 @@ export default function Navbar() {
   return (
     <AppBar position="sticky" sx={{ background: 'linear-gradient(90deg, #1976d2 60%, #90caf9 100%)', boxShadow: 3 }}>
       <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={() => {
+          // Custom sidebar open logic (can be connected to context or event)
+          const sidebarEvent = new CustomEvent('openSidebar');
+          window.dispatchEvent(sidebarEvent);
+        }}>
+          <MenuIcon />
+        </IconButton>
         <Brand variant="h6">AlmaConnect</Brand>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2, alignItems: 'center' }}>
-          {navLinks.map((link) => (
-            <Button
-              key={link.label}
-              href={link.path}
-              sx={{ color: '#fff', fontWeight: 500, '&:hover': { color: '#1976d2', background: '#e3f2fd' } }}
-            >
-              {link.label}
-            </Button>
-          ))}
+          {/* Show links based on user role */}
+          {navLinks
+            .filter(link => {
+              if (link.label === 'Admin Dashboard') return isAuthenticated && userType === 'admin';
+              if (link.label === 'Jobs' || link.label === 'Events' || link.label === 'Mentorship' || link.label === 'Feedback' || link.label === 'Complaints') return isAuthenticated;
+              return true;
+            })
+            .map((link) => (
+              <Button
+                key={link.label}
+                href={link.path}
+                sx={{ color: '#fff', fontWeight: 500, '&:hover': { color: '#1976d2', background: '#e3f2fd' } }}
+              >
+                {link.label}
+              </Button>
+            ))}
           <Button
             color="inherit"
             onClick={handleRoleMenuOpen}
@@ -99,7 +115,7 @@ export default function Navbar() {
             </Badge>
           </IconButton>
           {/* Profile Icon - only show if logged in */}
-          {localStorage.getItem('isLoggedIn') === 'true' && (
+          {isAuthenticated && (
             <>
               <IconButton color="inherit" onClick={e => setProfileAnchorEl(e.currentTarget)} sx={{ ml: 1 }}>
                 <AccountCircle />
@@ -107,12 +123,11 @@ export default function Navbar() {
               <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={() => setProfileAnchorEl(null)}>
                 <MenuItem onClick={() => {
                   setProfileAnchorEl(null);
-                  const role = localStorage.getItem('userType');
-                  if (role === 'admin') {
+                  if (userType === 'admin') {
                     navigate('/admin/edit-profile');
-                  } else if (role === 'student') {
+                  } else if (userType === 'student') {
                     navigate('/student/edit-profile');
-                  } else if (role === 'alumni') {
+                  } else if (userType === 'alumni') {
                     navigate('/alumni/edit-profile');
                   } else {
                     navigate('/profile/edit');
@@ -120,8 +135,7 @@ export default function Navbar() {
                 }}>Edit Profile</MenuItem>
                 <MenuItem onClick={() => {
                   setProfileAnchorEl(null);
-                  localStorage.removeItem('isLoggedIn');
-                  localStorage.removeItem('userType');
+                  logout();
                   navigate('/login');
                 }}>Logout</MenuItem>
               </Menu>
@@ -134,17 +148,38 @@ export default function Navbar() {
             <MenuIcon />
           </IconButton>
           <Menu anchorEl={mobileMenuAnchorEl} open={Boolean(mobileMenuAnchorEl)} onClose={handleMobileMenuClose}>
-            {navLinks.map((link) => (
-              <MenuItem key={link.label} component="a" href={link.path} onClick={handleMobileMenuClose}>
-                {link.label}
-              </MenuItem>
-            ))}
+            {navLinks
+              .filter(link => {
+                if (link.label === 'Admin Dashboard') return isAuthenticated && userType === 'admin';
+                if (link.label === 'Jobs' || link.label === 'Events' || link.label === 'Mentorship' || link.label === 'Feedback' || link.label === 'Complaints') return isAuthenticated;
+                return true;
+              })
+              .map((link) => (
+                <MenuItem key={link.label} component="a" href={link.path} onClick={handleMobileMenuClose}>
+                  {link.label}
+                </MenuItem>
+              ))}
             <MenuItem onClick={handleRoleMenuOpen}>Role</MenuItem>
-            <MenuItem onClick={e => setProfileAnchorEl(e.currentTarget)}>Profile</MenuItem>
+            {isAuthenticated && <MenuItem onClick={e => setProfileAnchorEl(e.currentTarget)}>Profile</MenuItem>}
           </Menu>
           <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={() => setProfileAnchorEl(null)}>
-            <MenuItem onClick={() => { setProfileAnchorEl(null); navigate('/profile/edit'); }}>Edit Profile</MenuItem>
-            <MenuItem onClick={() => { setProfileAnchorEl(null); /* Add logout logic here */ navigate('/login'); }}>Logout</MenuItem>
+            <MenuItem onClick={() => {
+              setProfileAnchorEl(null);
+              if (userType === 'admin') {
+                navigate('/admin/edit-profile');
+              } else if (userType === 'student') {
+                navigate('/student/edit-profile');
+              } else if (userType === 'alumni') {
+                navigate('/alumni/edit-profile');
+              } else {
+                navigate('/profile/edit');
+              }
+            }}>Edit Profile</MenuItem>
+            <MenuItem onClick={() => {
+              setProfileAnchorEl(null);
+              logout();
+              navigate('/login');
+            }}>Logout</MenuItem>
           </Menu>
         </Box>
       </Toolbar>

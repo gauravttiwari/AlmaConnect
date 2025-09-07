@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
@@ -11,6 +12,7 @@ const Signup = () => {
   const [branch, setBranch] = useState('');
   const [company, setCompany] = useState('');
   const [popup, setPopup] = useState({ show: false, message: '', type: '' });
+  const { isAuthenticated, userType: authUserType } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,6 +67,27 @@ const Signup = () => {
           fontWeight: 500
         }}>
           {popup.message}
+        </div>
+      )}
+      {/* Role-based UI elements */}
+      {isAuthenticated && authUserType === 'admin' && (
+        <div style={{ background: '#1976d2', color: '#fff', padding: '8px', borderRadius: '6px', marginBottom: 12 }}>
+          Welcome Admin! You have access to all admin features.
+        </div>
+      )}
+      {isAuthenticated && authUserType === 'alumni' && (
+        <div style={{ background: '#388e3c', color: '#fff', padding: '8px', borderRadius: '6px', marginBottom: 12 }}>
+          Welcome Alumni! You can access alumni features and connect with others.
+        </div>
+      )}
+      {isAuthenticated && authUserType === 'student' && (
+        <div style={{ background: '#0288d1', color: '#fff', padding: '8px', borderRadius: '6px', marginBottom: 12 }}>
+          Welcome Student! Explore jobs, events, and mentorship opportunities.
+        </div>
+      )}
+      {!isAuthenticated && (
+        <div style={{ background: '#f44336', color: '#fff', padding: '8px', borderRadius: '6px', marginBottom: 12 }}>
+          Please sign up or log in to access features.
         </div>
       )}
       <form onSubmit={handleSubmit}>
